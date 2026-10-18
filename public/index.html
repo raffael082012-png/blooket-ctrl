@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>blooket.ctrl</title>
+<style>
+:root{
+  --bg:#03050a;--panel:#080d14;--border:#0f2040;--blue:#00c3ff;
+  --dim:#0a1a2e;--text:#c0e8ff;--muted:#2a5070;--red:#ff2a55;
+  --green:#00ff88;--yellow:#ffe044;--purple:#bf5fff;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Courier New',monospace;background:var(--bg);color:var(--text);min-height:100vh;padding:20px}
+body::before{
+  content:"";position:fixed;inset:0;pointer-events:none;
+  background:
+    radial-gradient(ellipse at 20% 50%,rgba(0,195,255,.05) 0%,transparent 60%),
+    radial-gradient(ellipse at 80% 20%,rgba(191,95,255,.05) 0%,transparent 60%),
+    repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,195,255,.015) 2px,rgba(0,195,255,.015) 4px);
+}
+.wrap{position:relative;z-index:1;max-width:580px;margin:0 auto}
+.header{text-align:center;margin-bottom:24px;padding:16px}
+.header h1{font-size:22px;letter-spacing:.3em;color:var(--blue);text-shadow:0 0 20px rgba(0,195,255,.6);margin-bottom:4px}
+.header p{font-size:10px;color:var(--muted);letter-spacing:.15em}
+.card{border:1px solid var(--border);background:var(--panel);padding:16px;margin-bottom:12px;position:relative;overflow:hidden}
+.card::before{content:"";position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--blue),transparent);opacity:.4}
+.card h2{font-size:10px;letter-spacing:.2em;color:var(--blue);margin-bottom:14px}
+.card h2::before{content:"▸ "}
+label{display:block;font-size:10px;color:var(--muted);margin:8px 0 3px;letter-spacing:.08em}
+input{width:100%;background:#020509;border:1px solid var(--border);color:var(--text);padding:9px 10px;font:inherit;font-size:12px;outline:none;transition:border-color .2s}
+input:focus{border-color:var(--blue);box-shadow:0 0 8px rgba(0,195,255,.15)}
+.row{display:flex;gap:8px}.row>*{flex:1}
+.toggle-row{display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--border)}
+.toggle-row:last-of-type{border-bottom:none}
+.toggle-label{font-size:11px;color:var(--text)}
+.toggle-label span{font-size:10px;color:var(--muted);display:block;margin-top:2px}
+.toggle{position:relative;width:36px;height:20px;flex-shrink:0}
+.toggle input{opacity:0;width:0;height:0}
+.slider{position:absolute;inset:0;background:var(--dim);cursor:pointer;border:1px solid var(--border);transition:.2s}
+.slider::before{content:"";position:absolute;height:12px;width:12px;left:3px;top:3px;background:var(--muted);transition:.2s}
+.toggle input:checked+.slider{background:rgba(0,195,255,.15);border-color:var(--blue)}
+.toggle input:checked+.slider::before{transform:translateX(16px);background:var(--blue);box-shadow:0 0 6px var(--blue)}
+button{display:block;width:100%;margin-top:10px;padding:12px;background:transparent;border:1px solid var(--blue);color:var(--blue);font:inherit;font-size:11px;letter-spacing:.15em;text-transform:uppercase;cursor:pointer;transition:all .2s}
+button:hover{background:rgba(0,195,255,.08);box-shadow:0 0 15px rgba(0,195,255,.2)}
+button.green{border-color:var(--green);color:var(--green)}
+button.green:hover{background:rgba(0,255,136,.08)}
+button.purple{border-color:var(--purple);color:var(--purple)}
+button.purple:hover{background:rgba(191,95,255,.08)}
+button.red{border-color:var(--red);color:var(--red)}
+button.red:hover{background:rgba(255,42,85,.08)}
+button:disabled{opacity:.3;cursor:not-allowed}
+.log{margin-top:10px;border:1px solid var(--border);background:#020509;padding:10px;font-size:11px;color:var(--green);min-height:70px;max-height:150px;overflow-y:auto;white-space:pre-wrap;line-height:1.6}
+.log .err{color:var(--red)}.log .info{color:var(--blue)}.log .warn{color:var(--yellow)}
+.counter{font-size:20px;color:var(--blue);text-align:center;padding:8px 0;text-shadow:0 0 10px rgba(0,195,255,.4);letter-spacing:.1em}
+.bookmarklet{display:block;margin-top:10px;padding:12px;text-align:center;border:1px solid var(--green);color:var(--green);font:inherit;font-size:11px;letter-spacing:.1em;text-transform:uppercase;cursor:grab;text-decoration:none;background:rgba(0,255,136,.05);transition:all .2s}
+.bookmarklet:hover{background:rgba(0,255,136,.12);box-shadow:0 0 15px rgba(0,255,136,.2)}
+.hint{font-size:10px;color:var(--muted);margin-top:6px;line-height:1.6}
+.hint b{color:var(--yellow)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="header">
+    <h1>// BLOOKET.CTRL</h1>
+    <p>raid · cheats · tools</p>
+  </div>
+
+  <!-- RAID -->
+  <div class="card">
+    <h2>RAID</h2>
+    <label>game pin</label>
+    <input id="rPin" placeholder="1234567" maxlength="12"/>
+    <div class="row">
+      <div><label>base name</label><input id="rName" value="HACKEDLOL"/></div>
+      <div><label>count (max 80)</label><input id="rCount" type="number" value="20" min="1" max="80"/></div>
+    </div>
+    <div class="counter" id="rCounter">— / —</div>
+    <button class="green" id="raidBtn">⚡ launch raid</button>
+    <button class="red" id="raidStop" style="display:none">■ stop</button>
+    <div class="log" id="raidLog">ready</div>
+  </div>
+
+  <!-- CHEATS -->
+  <div class="card">
+    <h2>CHEATS — bookmarklet</h2>
+    <div class="hint">
+      <b>1.</b> toggle cheats below &nbsp;
+      <b>2.</b> drag green button to bookmarks bar &nbsp;
+      <b>3.</b> go to blooket game tab &nbsp;
+      <b>4.</b> click the bookmark — done, no console needed
+    </div>
+    <div style="margin-top:12px">
+      <div class="toggle-row">
+        <div class="toggle-label">auto answer<span>clicks correct answer automatically</span></div>
+        <label class="toggle"><input type="checkbox" id="tAuto" checked/><span class="slider"></span></label>
+      </div>
+      <div class="toggle-row">
+        <div class="toggle-label">x-ray<span>highlights correct answer in green</span></div>
+        <label class="toggle"><input type="checkbox" id="tXray" checked/><span class="slider"></span></label>
+      </div>
+      <div class="toggle-row">
+        <div class="toggle-label">speed hack<span>answers in ~100ms</span></div>
+        <label class="toggle"><input type="checkbox" id="tSpeed" checked/><span class="slider"></span></label>
+      </div>
+    </div>
+    <a id="bookmarkLink" class="bookmarklet" href="#">⚡ drag me to bookmarks bar</a>
+    <button class="purple" id="copyCheat">copy script (F12 fallback)</button>
+    <div class="log" id="cheatLog">drag bookmark → go to blooket → click it</div>
+  </div>
+
+</div>
+
+<script>
+// ── RAID ──────────────────────────────────────────────────────────────────────
+let abort = false;
+
+document.getElementById('raidBtn').onclick = async () => {
+  const pin   = document.getElementById('rPin').value.trim();
+  const count = Math.min(80, Math.max(1, parseInt(document.getElementById('rCount').value)||20));
+  const base  = document.getElementById('rName').value.trim()||'HACKEDLOL';
+  if (!pin) { rlog('need a pin','err'); return; }
+
+  abort = false;
+  document.getElementById('raidBtn').style.display='none';
+  document.getElementById('raidStop').style.display='block';
+  document.getElementById('rCounter').textContent=`0 / ${count}`;
+  rlog(`launching ${count} bots at pin ${pin}`,'info');
+
+  let ok=0;
+  await Promise.all(Array.from({length:count},(_,i)=>{
+    const name=`${base}${i+1}`;
+    return fetch('/api/join',{
+      method:'PUT',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({id:pin,name}),
+    })
+    .then(r=>r.json())
+    .then(()=>{
+      if(abort)return;
+      ok++;
+      document.getElementById('rCounter').textContent=`${ok} / ${count}`;
+      rlog(`✓ ${name}`);
+    })
+    .catch(e=>rlog(`✗ ${name} — ${e.message}`,'err'));
+  }));
+
+  rlog(`done — ${ok}/${count} joined`,'info');
+  document.getElementById('raidBtn').style.display='block';
+  document.getElementById('raidStop').style.display='none';
+};
+
+document.getElementById('raidStop').onclick=()=>{
+  abort=true;
+  rlog('stopped','warn');
+  document.getElementById('raidBtn').style.display='block';
+  document.getElementById('raidStop').style.display='none';
+};
+
+function rlog(msg,cls){
+  const el=document.getElementById('raidLog');
+  const d=document.createElement('div');
+  if(cls)d.className=cls;
+  d.textContent=`[${new Date().toLocaleTimeString()}] ${msg}`;
+  el.appendChild(d);
+  el.scrollTop=el.scrollHeight;
+}
+
+// ── BOOKMARKLET ───────────────────────────────────────────────────────────────
+function buildScript(){
+  const auto  = document.getElementById('tAuto').checked;
+  const xray  = document.getElementById('tXray').checked;
+  const speed = document.getElementById('tSpeed').checked;
+  const delay = speed?'80+Math.random()*120':'600+Math.random()*400';
+
+  let c=`(function(){`;
+
+  if(xray){c+=`
+var _xr=setInterval(function(){
+  try{
+    var st=window.blooket&&(blooket.game||blooket.s);
+    if(!st)return;
+    var q=(st.questions||[])[st.questionNum||0];
+    if(!q)return;
+    var ca=q.correctAnswers||(q.answers||[]).filter(function(a){return a.correct||typeof a==='string'}).map(function(a){return typeof a==='string'?a:a.body});
+    document.querySelectorAll('[class*="answer"],[class*="Answer"],[class*="choice"],[class*="Choice"]').forEach(function(el){
+      var t=(el.innerText||'').trim();
+      if(ca.indexOf(t)>-1){el.style.outline='3px solid #00ff88';el.style.boxShadow='0 0 16px #00ff88';}
+      else{el.style.outline='';el.style.boxShadow='';}
+    });
+  }catch(e){}
+},200);`;}
+
+  if(auto){c+=`
+var _aa=setInterval(function(){
+  try{
+    var st=window.blooket&&(blooket.game||blooket.s);
+    if(!st)return;
+    var q=(st.questions||[])[st.questionNum||0];
+    if(!q)return;
+    var ca=q.correctAnswers||(q.answers||[]).filter(function(a){return a.correct||typeof a==='string'}).map(function(a){return typeof a==='string'?a:a.body});
+    var btns=[].slice.call(document.querySelectorAll('[class*="answer"],[class*="Answer"],[class*="choice"],[class*="Choice"],button'));
+    var t=btns.find(function(b){return ca.indexOf((b.innerText||'').trim())>-1;});
+    if(t)setTimeout(function(){t.click();},${delay});
+  }catch(e){}
+},300);`;}
+
+  c+=`console.log('%c blooket.ctrl active ','background:#00c3ff;color:#000;font-weight:bold;padding:3px 8px');})();`;
+  return c;
+}
+
+function updateBookmark(){
+  document.getElementById('bookmarkLink').href='javascript:'+encodeURIComponent(buildScript());
+}
+['tAuto','tXray','tSpeed'].forEach(id=>document.getElementById(id).addEventListener('change',updateBookmark));
+updateBookmark();
+
+document.getElementById('copyCheat').onclick=async()=>{
+  try{
+    await navigator.clipboard.writeText(buildScript());
+    document.getElementById('cheatLog').textContent='✓ copied — paste in blooket console (F12 → Console)';
+  }catch{
+    document.getElementById('cheatLog').textContent='copy failed — drag the bookmark instead';
+  }
+};
+</script>
+</body>
+</html>
